@@ -1,47 +1,64 @@
 - name: Test post please ignore
   hosts: localhost
+  gather_facts: true
   vars:
-    - goversion_preferred: "go version go1.24.1*"
-    - tfversion_preferred: "Terraform v1.6*"
+    - goversion_preferred: "go version go1.22.2 linux/amd64"
+    - tfversion_preferred: "Terraform v1.11.2\non linux_amd64"
+
   tasks:
+    - name: Check for Ubuntu distro
+      ansible.builtin.fail:
+        msg: "Only good for Ubuntu. Please try again."
+      when: ansible_facts['distribution'] != "Ubuntu"
+
     - name: Install packages
-      ansible.builtin.package:
+      ansible.builtin.apt:
         name:
           - neovim
           - git
           - tree
           - xsel
           - xclip
-        become: true
-        become_user: root
         state: present
-      when: ansible_distribution == 'Ubuntu'
-    
+        update_cache: yes
+      become: true
+
     - name: Check for Golang version
-      command: go version
+      ansible.builtin.command: go version     
       register: golang_version
       ignore_errors: yes
 
-    - name: Install Golang Binary
-      when: golang_version["stdout"] != goversion_preferred
-        ansible.builtin.apt:
-          - name: golang
-            become_user: root
-            become: true
-    
+    - name: Debug golang version
+      debug:
+        msg: "{{ golang_version.stdout }}"
+
+
+          #    - name: Install Golang Binary
+          # when: golang_version.stdout != goversion_preferred
+
+
     - name: Check for Terraform version
-      command: terraform -version
+      ansible.builtin.command: terraform -version
       register: tf_version
       ignore_errors: yes
-      
-    - name: Install Terraform Binary
-      when: tf_version["stdout"] != tfversion_preferred
-        ansible.builtin.apt:
-          - name: terraform
-            
+
+        #    - name: Install Terraform Binary
+        #      when: tf_version.stdout != tfversion_preferred
+
+    - name: Debug terraform version
+      debug:
+        msg: "{{ tf_version.stdout }}"
 
 
+    - name: Copy zshrc file to user folder'
+      ansible.builtin.copy:
+        src: /home/{{ ansible_facts.ansible_user_id }}/zshrc
+        dest: /home/{{ ansible_facts.ansible_user_id }}/.oh-my-zsh/.zshrc
+        owner: {{ ansible_facts.ansible_user_id }}
+        group: {{ ansible_facts.ansible_user_id }}
+        mode: '0744'
 
-    - name: Copy zshrc folder to user folder'
-      ansible.builtin.file:
+        
+
+    
 
