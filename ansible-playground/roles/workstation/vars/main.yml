@@ -1,5 +1,0 @@
----
-
-# preferred versions
-goversion_preferred: "go version go1.22.2 linux/amd64"
-tfversion_preferred: "Terraform v1.11.2\non linux_amd64"
