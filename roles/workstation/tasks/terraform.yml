@@ -1,0 +1,13 @@
+---
+- name: Check for Terraform version
+  ansible.builtin.command: terraform -version
+  register: tf_version
+  ignore_errors: true
+
+#    - name: Install Terraform Binary
+#      when: tf_version.stdout != tfversion_preferred
+
+- name: Debug terraform version
+  ansible.builtin.debug:
+    msg: "{{ tf_version.stdout }}"
+

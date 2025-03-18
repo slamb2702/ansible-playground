@@ -1,4 +1,5 @@
 ---
+
 - name: Check for Ubuntu distro
   ansible.builtin.fail:
     msg: "Only good for Ubuntu. Please try again."
@@ -16,35 +17,33 @@
     update_cache: true
   become: true
 
-- name: Check for Golang version
-  ansible.builtin.command: go version
-  register: golang_version
-  ignore_errors: true
-
-- name: Debug golang version
-  ansible.builtin.debug:
-    msg: "{{ golang_version.stdout }}"
-
-#    - name: Install Golang Binary
-#      when: golang_version.stdout != goversion_preferred
-
-- name: Check for Terraform version
-  ansible.builtin.command: terraform -version
-  register: tf_version
-  ignore_errors: true
-
-#    - name: Install Terraform Binary
-#      when: tf_version.stdout != tfversion_preferred
-
-- name: Debug terraform version
-  ansible.builtin.debug:
-    msg: "{{ tf_version.stdout }}"
-
-
 - name: Copy zshrc file to user folder'
   ansible.builtin.copy:
     src: /roles/workstation/files/zshrc
-    dest: /home/{{ ansible_user_id }}/.oh-my-zsh/.zshrc
-    owner: "{{ ansible_user_id }}"
-    group: "{{ ansible_user_id }}"
+    dest: /home/{{ lookup('env', 'USER') }}/.zshrc
+    owner: "{{ lookup('env', 'USER') }}"
+    group: "{{ lookup('env', 'USER') }}"
     mode: '0774'
+
+###
+# Check for version of Go lang, if not preferred version, 
+###
+
+- name: Check for Golang version
+  ansible.builtin.command: go version
+  register: golang_version
+  changed_when: no
+  ignore_errors: true
+
+- name: Install Golang
+  ansible.builtin.import_tasks:
+    file: golang.yml
+  when: golang_version.stdout != goversion_preferred
+
+
+
+
+- name: Check for and install Terraform
+  ansible.builtin.import_tasks:
+    file: terraform.yml
+

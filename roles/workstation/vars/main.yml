@@ -1,5 +1,12 @@
 ---
 
 # preferred versions
-goversion_preferred: "go version go1.22.2 linux/amd64"
+goversion_preferred: "go version go1.24.1 linux/amd64"
 tfversion_preferred: "Terraform v1.11.2\non linux_amd64"
+
+go_version: '1.24.1'
+go_platform: linux-amd64
+go_checksum:
+  '1.24.1':
+    linux-amd64: sha256:cb2396bae64183cdccf81a9a6df0aea3bce9511fc21469fb89a0c00470088073
+
