@@ -6,20 +6,20 @@
   become: true
 
 - name: Create temp directory 
-  file:
+  ansibile.builtin.file:
     path: /tmp/go/extracted
     state: directory
 
 - name: Download go tar file
-  get_url:
+  ansibile.builtin.get_url:
     url: 'https://go.dev/dl/go{{ go_version }}.linux-{{ go_platform }}.tar.gz'
     dest: /tmp/go
     checksum: '{{ go_checksum }}'
     mode: '0755'
 
 - name: Unarchive go
-  unarchive:
-    copy: no
+  ansibile.builtin.unarchive:
+    copy: false
     src: '/tmp/go/go{{ go_version }}.linux-{{ go_platform }}.tar.gz'
     dest: '/tmp/go/extracted'
     creates: '/tmp/go/extracted/go'
@@ -31,5 +31,5 @@
       - export PATH=$PATH:/usr/local/go/bin
 
 - name: Remove unneeded tar file
-  file: /tmp/go
+  ansibile.builtin.file: /tmp/go
   state: absent
