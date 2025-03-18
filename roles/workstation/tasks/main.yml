@@ -2,7 +2,7 @@
 - name: Check for Ubuntu distro
   ansible.builtin.fail:
     msg: "Only good for Ubuntu. Please try again."
-  when: ansible_facts['distribution'] != "Ubuntu" 
+  when: ansible_facts['distribution'] != "Ubuntu"
 
 - name: Install packages
   ansible.builtin.apt:
@@ -39,7 +39,8 @@
 - name: Debug terraform version
   ansible.builtin.debug:
     msg: "{{ tf_version.stdout }}"
-          
+
+
 - name: Copy zshrc file to user folder'
   ansible.builtin.copy:
     src: /roles/workstation/files/zshrc
