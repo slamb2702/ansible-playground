@@ -46,7 +46,7 @@
 
 - name: Copy zshrc file to user folder'
   ansible.builtin.copy:
-    src: ./roles/workstation/files/zshrc
+    src: /roles/workstation/files/zshrc
     dest: /home/{{ ansible_user_id }}/.oh-my-zsh/.zshrc
     owner: {{ ansible_user_id }}
     group: {{ ansible_user_id }}
