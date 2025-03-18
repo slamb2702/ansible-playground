@@ -2,8 +2,8 @@
 - name: Check for Ubuntu distro
   ansible.builtin.fail:
     msg: "Only good for Ubuntu. Please try again."
-  when: ansible_facts['distribution'] != "Ubuntu" 
-  
+  when: ansible_facts['distribution'] != "Ubuntu"
+
 - name: Install packages
   ansible.builtin.apt:
     name:
@@ -13,43 +13,38 @@
       - xsel
       - xclip
     state: present
-    update_cache: yes
-  become: true    
-  
+    update_cache: true
+  become: true
+
 - name: Check for Golang version
   ansible.builtin.command: go version
   register: golang_version
-  ignore_errors: yes
+  ignore_errors: true
 
 - name: Debug golang version
-  debug:
+  ansible.builtin.debug:
     msg: "{{ golang_version.stdout }}"
-
 
 #    - name: Install Golang Binary
 #      when: golang_version.stdout != goversion_preferred
 
-
 - name: Check for Terraform version
   ansible.builtin.command: terraform -version
   register: tf_version
-  ignore_errors: yes
-  
+  ignore_errors: true
+
 #    - name: Install Terraform Binary
 #      when: tf_version.stdout != tfversion_preferred
 
 - name: Debug terraform version
-  debug:
-    msg: "{{ tf_version.stdout }}" 
-          
+  ansible.builtin.debug:
+    msg: "{{ tf_version.stdout }}"
 
 
 - name: Copy zshrc file to user folder'
   ansible.builtin.copy:
     src: /roles/workstation/files/zshrc
     dest: /home/{{ ansible_user_id }}/.oh-my-zsh/.zshrc
-    owner: {{ ansible_user_id }}
-    group: {{ ansible_user_id }}
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
     mode: '0774'
-
-
