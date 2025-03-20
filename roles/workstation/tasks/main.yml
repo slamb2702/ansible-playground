@@ -19,20 +19,22 @@
 
 - name: Copy zshrc file to user folder'
   ansible.builtin.copy:
-    src: /roles/workstation/files/zshrc
+    src: zshrc
     dest: /home/{{ lookup('env', 'USER') }}/.zshrc
     owner: "{{ lookup('env', 'USER') }}"
     group: "{{ lookup('env', 'USER') }}"
-    mode: '0774'
+    mode: '0644'
+  become: true
+
 
 ###
-# Check for version of Go lang, if not preferred version, 
+# Check for version of Go lang, if not preferred version,
 ###
 
 - name: Check for Golang version
   ansible.builtin.command: go version
   register: golang_version
-  changed_when: no
+  changed_when: false
   ignore_errors: true
 
 - name: Install Golang

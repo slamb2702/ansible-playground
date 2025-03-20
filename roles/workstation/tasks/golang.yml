@@ -1,35 +1,31 @@
 ---
 - name: Remove previous installation of go
-  ansible.builtin.command:
-    cmd:
-      - rm -rf /usr/local/go
-  become: true
+  ansible.builtin.file:
+    path: /usr/local/go
+    state: absent
 
 - name: Create temp directory 
-  ansibile.builtin.file:
+  ansible.builtin.file:
     path: /tmp/go/extracted
     state: directory
 
 - name: Download go tar file
-  ansibile.builtin.get_url:
-    url: 'https://go.dev/dl/go{{ go_version }}.linux-{{ go_platform }}.tar.gz'
+  ansible.builtin.get_url:
+    url: 'https://go.dev/dl/go{{ go_version }}.{{ go_platform }}.tar.gz'
     dest: /tmp/go
-    checksum: '{{ go_checksum }}'
     mode: '0755'
 
 - name: Unarchive go
-  ansibile.builtin.unarchive:
+  ansible.builtin.unarchive:
     copy: false
-    src: '/tmp/go/go{{ go_version }}.linux-{{ go_platform }}.tar.gz'
+    src: '/tmp/go/go{{ go_version }}.{{ go_platform }}.tar.gz'
     dest: '/tmp/go/extracted'
     creates: '/tmp/go/extracted/go'
 
 - name: Move extracted file to local folder
-  ansible.builtin.command:
-    cmd:
-      - mv -r /tmp/go/extracted/go {{ ansible_env.HOME }}/local/go
-      - export PATH=$PATH:/usr/local/go/bin
+  ansible.builtin.shell: mv /tmp/go/extracted/* /usr/local/
 
 - name: Remove unneeded tar file
-  ansibile.builtin.file: /tmp/go
-  state: absent
+  ansible.builtin.file: 
+    path: /tmp/go
+    state: absent
