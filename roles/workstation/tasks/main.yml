@@ -17,16 +17,6 @@
     update_cache: true
   become: true
 
-- name: Copy zshrc file to user folder'
-  ansible.builtin.copy:
-    src: zshrc
-    dest: /home/{{ lookup('env', 'USER') }}/.zshrc
-    owner: "{{ lookup('env', 'USER') }}"
-    group: "{{ lookup('env', 'USER') }}"
-    mode: '0644'
-  become: true
-
-
 ###
 # Check for version of Go lang, if not preferred version,
 ###
@@ -43,9 +33,16 @@
   when: golang_version.stdout != goversion_preferred
 
 
-
-
 #- name: Check for and install Terraform
 #  ansible.builtin.import_tasks:
 #    file: terraform.yml
+
+- name: Copy zshrc file to user folder'
+  ansible.builtin.copy:
+    src: zshrc
+    dest: /home/{{ lookup('env', 'USER') }}/.zshrc
+    owner: "{{ lookup('env', 'USER') }}"
+    group: "{{ lookup('env', 'USER') }}"
+    mode: '0644'
+  become: true
 

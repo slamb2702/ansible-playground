@@ -4,7 +4,7 @@
 goversion_preferred: "go version go1.24.1 linux/amd64"
 tfversion_preferred: "Terraform v1.11.2\non linux_amd64"
 
-go_version: '1.24.1'
+go_version: '1.24.0'
 go_platform: linux-amd64
 
 #go_checksum:
