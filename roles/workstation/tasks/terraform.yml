@@ -1,13 +1,31 @@
 ---
-- name: Check for Terraform version
-  ansible.builtin.command: terraform -version
-  register: tf_version
-  ignore_errors: true
+- name: Remove previous installation of terraform
+  ansible.builtin.file:
+    path: /usr/local/tf
+    state: absent
 
-#    - name: Install Terraform Binary
-#      when: tf_version.stdout != tfversion_preferred
+- name: Create temp directory 
+  ansible.builtin.file:
+    path: /tmp/tf/extracted
+    state: directory
 
-- name: Debug terraform version
-  ansible.builtin.debug:
-    msg: "{{ tf_version.stdout }}"
+- name: Download terraform tar file
+  ansible.builtin.get_url:
+    url: 'https://releases.hashicorp.com/terraform/{{ tf_version }}/terraform_{{ tf_version }}_{{ tf_platform }}.zip'
+    dest: /tmp/tf
+    mode: '0755'
 
+- name: Unarchive terraform
+  ansible.builtin.unarchive:
+    copy: false
+    src: '/tmp/tf/tf{{ tf_version }}.{{ tf_platform }}.tar.gz'
+    dest: '/tmp/tf/extracted'
+    creates: '/tmp/tf/extracted/tf'
+
+- name: Move extracted file to local folder
+  ansible.builtin.shell: mv /tmp/tf/extracted/* /usr/local/
+
+- name: Remove unneeded tar file
+  ansible.builtin.file:
+    path: /tmp/tf
+    state: absent

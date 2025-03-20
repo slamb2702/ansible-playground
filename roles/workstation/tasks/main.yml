@@ -32,10 +32,21 @@
     file: golang.yml
   when: golang_version.stdout != goversion_preferred
 
+###
+# Check for version of Go lang, if not preferred version,
+###
 
-#- name: Check for and install Terraform
-#  ansible.builtin.import_tasks:
-#    file: terraform.yml
+- name: Check for Terraform version
+  ansible.builtin.command: terraform -version
+  register: tf_version
+  changed_when: false
+  ignore_errors: true
+
+- name: Install Terraform
+  ansible.builtin.import_tasks:
+    file: terraform.yml
+  when: tf_version.stdout != tfversion_preferred
+
 
 - name: Copy zshrc file to user folder'
   ansible.builtin.copy:
@@ -46,3 +57,7 @@
     mode: '0644'
   become: true
 
+- name: Install yq from snap community 
+  community.general.snap:
+    name:
+      - yq
