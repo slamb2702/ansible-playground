@@ -20,10 +20,10 @@
 ###
 
 - name: Check for Golang version
-  ansible.builtin.command: go version
+  ansible.builtin.shell: "/usr/local/go/bin/go version"
   register: golang_version
-  changed_when: false
   ignore_errors: true
+  changed_when: false
 
 - name: Install Golang
   ansible.builtin.import_tasks:
@@ -48,7 +48,7 @@
 - name: Copy zshrc file to user folder'
   ansible.builtin.copy:
     src: zshrc
-    dest: /home/local/.zshrc
+    dest: /home/{{ lookup('env', 'USER') }}/.zshrc
     owner: "{{ lookup('env', 'USER') }}"
     group: "{{ lookup('env', 'USER') }}"
     mode: '0644'
@@ -57,7 +57,7 @@
   ansible.builtin.debug:
     msg:
       - "{{ lookup('env', 'USER') }}"
-      - "{{ golang_version.stdout }}"
+      - "{{ golang_version }}"
       - "{{ goversion_preferred }}"
       - "{{ lookup('env', 'USER') }}"
       - "{{ ansible_user_id }}"

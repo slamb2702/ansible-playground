@@ -29,3 +29,7 @@
   ansible.builtin.file: 
     path: /tmp/go
     state: absent
+
+- name: Export
+  ansible.builtin.shell: export PATH=$PATH:/usr/local/go/bin
+  
