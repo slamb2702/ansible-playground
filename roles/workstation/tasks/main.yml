@@ -1,5 +1,4 @@
 ---
-
 - name: Check for Ubuntu distro
   ansible.builtin.fail:
     msg: "Only good for Ubuntu. Please try again."
@@ -15,7 +14,6 @@
       - xclip
     state: present
     update_cache: true
-  become: true
 
 ###
 # Check for version of Go lang, if not preferred version,
@@ -30,7 +28,7 @@
 - name: Install Golang
   ansible.builtin.import_tasks:
     file: golang.yml
-  when: golang_version.stdout != goversion_preferred
+  when: 'golang_version.stdout != goversion_preferred'
 
 ###
 # Check for version of Terraform, if not preferred version,
@@ -45,17 +43,24 @@
 - name: Install Terraform
   ansible.builtin.import_tasks:
     file: terraform.yml
-  when: tf_version.stdout != tfversion_preferred
-
+  when: 'tf_version.stdout != tfversion_preferred'
 
 - name: Copy zshrc file to user folder'
   ansible.builtin.copy:
     src: zshrc
-    dest: /home/{{ lookup('env', 'USER') }}/.zshrc
+    dest: /home/local/.zshrc
     owner: "{{ lookup('env', 'USER') }}"
     group: "{{ lookup('env', 'USER') }}"
     mode: '0644'
-  become: true
+
+- name: Debug
+  ansible.builtin.debug:
+    msg:
+      - "{{ lookup('env', 'USER') }}"
+      - "{{ golang_version.stdout }}"
+      - "{{ goversion_preferred }}"
+      - "{{ lookup('env', 'USER') }}"
+      - "{{ ansible_user_id }}"
 
 - name: Install yq from snap community
   community.general.snap:
